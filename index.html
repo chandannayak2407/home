@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #1e293b;
+        color: #f1f5f9;
+        min-height: 100vh;
+        padding: 3rem 1rem;
+        display: flex;
+        justify-content: center;
+      }
+      .container {
+        max-width: 42rem;
+        width: 100%;
+        background: #334155;
+        border: 1px solid #475569;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+      }
+      .hidden { display: none !important; }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+      label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #cbd5e1;
+        margin-bottom: 0.5rem;
+      }
+      input, select {
+        width: 100%;
+        background: #0f172a;
+        border: 1px solid #475569;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: #f8fafc;
+        box-sizing: border-box;
+      }
+      input:focus, select:focus {
+        outline: none;
+        border-color: #fbbf24;
+        box-shadow: 0 0 0 2px rgba(251,191,36,0.4);
+      }
+      button {
+        font-family: inherit;
+      }
+      .btn-primary {
+        width: 100%;
+        background: #fbbf24;
+        color: #1e293b;
+        font-weight: 700;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        transition: background 150ms;
+      }
+      .btn-primary:hover:not(:disabled) {
+        background: #f59e0b;
+      }
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #475569;
+        color: #94a3b8;
+      }
+      .readonly-field {
+        background: #1e293b;
+        color: #fbbf24;
+        font-weight: 700;
+        cursor: not-allowed;
+        border-color: #334155;
+      }
+      .card {
+        background: rgba(15,23,42,0.6);
+        border: 1px solid #475569;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      @media (min-width: 768px) {
+        .md-grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .md-grid-2 { grid-template-columns: repeat(2, 1fr); }
+      }
+      .loader {
+        border: 4px solid #fbbf24;
+        border-top-color: transparent;
+        border-radius: 50%;
+        width: 2.5rem;
+        height: 2.5rem;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .success-icon {
+        width: 5rem; height: 5rem;
+        background: rgba(16,185,129,0.2);
+        border: 1px solid rgba(16,185,129,0.4);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #34d399;
+        margin: 0 auto;
+        animation: bounce 1s infinite;
+      }
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-0.5rem); }
+      }
+      .choice-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      @media (min-width: 640px) {
+        .choice-grid { grid-template-columns: 1fr 1fr; }
+      }
+      .btn-outlined {
+        background: #334155;
+        color: #e2e8f0;
+        border: 1px solid #475569;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-align: center;
+      }
+      .btn-outlined:hover {
+        background: #475569;
+      }
+      .btn-filled {
+        background: #10b981;
+        color: #0f172a;
+        border: 1px solid #34d399;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.875rem;
+        text-align: center;
+      }
+      .btn-filled:hover {
+        background: #34d399;
+      }
+      .alert {
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
+      .alert-warning {
+        background: rgba(251,191,36,0.15);
+        border: 1px solid rgba(251,191,36,0.5);
+        color: #fcd34d;
+      }
+      .alert-error {
+        background: rgba(244,63,94,0.15);
+        border: 1px solid rgba(244,63,94,0.5);
+        color: #fda4af;
+      }
+
+      .error-banner {
+        background: rgba(251,191,36,0.15);
+        border: 1px solid rgba(251,191,36,0.5);
+        color: #fcd34d;
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.25rem;
+      }
+      .error-banner strong { color: #fbbf24; }
+
+      .text-center { text-align: center; }
+      .max-w-2xl { max-width: 42rem; }
+      .max-w-md { max-width: 28rem; }
+      .rounded-full { border-radius: 9999px; }
+      .space-y-6 > * + * { margin-top: 1.5rem; }
+      .space-y-4 > * + * { margin-top: 1rem; }
+      .border-t { border-top: 1px solid; }
+      .border-slate-700\/60 { border-color: rgba(71,85,105,0.6); }
+      .bg-slate-900\/60 { background-color: rgba(15,23,42,0.6); }
+      .animate-bounce { animation: bounce 1s infinite; }
+      .text-3xl { font-size: 1.875rem; }
+      .text-2xl { font-size: 1.5rem; }
+      .text-xs { font-size: 0.75rem; }
+      .font-semibold { font-weight: 600; }
+      .font-bold { font-weight: 700; }
+      .uppercase { text-transform: uppercase; }
+      .tracking-wider { letter-spacing: 0.05em; }
+      .inline-flex { display: inline-flex; }
+      .items-center { align-items: center; }
+      .gap-1\.5 { gap: 0.375rem; }
+      .gap-3 { gap: 0.75rem; }
+      .gap-4 { gap: 1rem; }
+      .rounded-2xl { border-radius: 1rem; }
+      .border { border-width: 1px; }
+      .border-amber-400\/30 { border-color: rgba(251,191,36,0.3); }
+      .border-amber-300 { border-color: #fcd34d; }
+      .border-amber-400 { border-color: #fbbf24; }
+      .border-2 { border-width: 2px; }
+      .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+      .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+      .px-4 { padding-left: 1rem; padding-right: 1rem; }
+      .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+      .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+      .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+      .mb-2 { margin-bottom: 0.5rem; }
+      .mb-3 { margin-bottom: 0.75rem; }
+      .mb-4 { margin-bottom: 1rem; }
+      .mb-6 { margin-bottom: 1.5rem; }
+      .mb-8 { margin-bottom: 2rem; }
+      .mt-3 { margin-top: 0.75rem; }
+      .mt-6 { margin-top: 1.5rem; }
+      .mr-4 { margin-right: 1rem; }
+      .mx-auto { margin-left: auto; margin-right: auto; }
+      .w-3\.5 { width: 0.875rem; }
+      .h-3\.5 { height: 0.875rem; }
+      .w-20 { width: 5rem; }
+      .h-20 { height: 5rem; }
+      .text-4xl { font-size: 2.5rem; }
+      .border-emerald-500\/40 { border-color: rgba(5,150,105,0.4); }
+      .bg-emerald-500\/20 { background-color: rgba(16,185,129,0.2); }
+      .text-emerald-400 { color: #10b981; }
+      .bg-amber-400 { background-color: #fbbf24; }
+      .text-slate-950 { color: #020617; }
+      .hover\:bg-amber-400\/20:hover { background-color: rgba(251,191,36,0.2); }
+      .hover\:bg-amber-300:hover { background-color: #fcd34d; }
+      .hover\:bg-slate-700:hover { background-color: #334155; }
+      .hover\:text-amber-300:hover { color: #fcd34d; }
+      .disabled\:opacity-50:disabled { opacity: 0.5; }
+      .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+      .disabled\:bg-slate-700:disabled { background-color: #334155; }
+      .disabled\:text-slate-400:disabled { color: #94a3b8; }
+      .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+      .duration-200 { transition-duration: 200ms; }
+      .cursor-not-allowed { cursor: not-allowed; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="headerSection" class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-amber-400 mb-2">🏆 Winner Claim Portal</h1>
+        <p class="text-slate-400 text-sm mb-3">Select your winning details to verify and claim your rewards.</p>
+        <a href="https://uptoskills.com/leagues/pro-rewards?vault" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 px-3 py-1.5 rounded-full">
+          <span>Click here to see the leaderboard</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+          </svg>
+        </a>
+      </div>
+
+      <div id="loader" class="text-center py-10">
+        <div class="loader"></div>
+        <p class="mt-3 text-slate-400 text-sm">Loading leaderboard data...</p>
+      </div>
+
+      <form id="winnerForm" class="hidden space-y-6" onsubmit="app.handleSubmit(event)">
+        <input type="hidden" id="userId" name="userId">
+        <input type="hidden" id="existingPhotoUrl" name="existingPhotoUrl">
+
+        <div id="duplicateClaimError" class="hidden error-banner">
+          ⚠️ <strong>Duplicate Claim!</strong> You have already submitted a claim for this specific period and rank.
+        </div>
+
+        <div class="card">
+          <h2 class="text-amber-400 font-semibold text-sm uppercase tracking-wider mb-4">1. Select Your Rank Details</h2>
+          <div class="grid grid-cols-1 md-grid-3 gap-4">
+            <div>
+              <label for="typeSelect">Winner Type</label>
+              <select id="typeSelect" onchange="app.onTypeChange()">
+                <option value="">-- Select Type --</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Monthly">Monthly</option>
+              </select>
+            </div>
+            <div>
+              <label id="periodLabel">Period</label>
+              <select id="periodSelect" disabled onchange="app.onPeriodChange()">
+                <option value="">-- Select Period --</option>
+              </select>
+            </div>
+            <div>
+              <label for="rankSelect">Rank</label>
+              <select id="rankSelect" disabled onchange="app.onRankChange()">
+                <option value="">-- Select Rank --</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="personalSection" class="hidden card">
+          <h2 class="text-amber-400 font-semibold text-sm uppercase tracking-wider mb-4">2. Personal Information</h2>
+          <div class="grid grid-cols-1 md-grid-2 gap-4 mb-4">
+            <div>
+              <label>First Name</label>
+              <input type="text" id="firstName" class="readonly-field" readonly tabindex="-1">
+            </div>
+            <div>
+              <label>Last Name</label>
+              <input type="text" id="lastName" class="readonly-field" readonly tabindex="-1">
+            </div>
+          </div>
+
+          <div id="returningUserChoice" class="hidden mb-4">
+            <div class="alert alert-warning mb-3">
+              ✅ <strong>Existing Profile Found!</strong> Would you like to use your previously submitted address/bank details or enter new ones for this claim?
+            </div>
+            <div class="choice-grid">
+              <button type="button" class="btn-filled" onclick="app.usePreviousProfile(true)">✅ Use Previously Submitted Details</button>
+              <button type="button" class="btn-outlined" onclick="app.usePreviousProfile(false)">✏️ Add New Details</button>
+            </div>
+          </div>
+
+          <div id="newProfileFields" class="space-y-4">
+            <div class="grid grid-cols-1 md-grid-2 gap-4">
+              <div>
+                <label for="mobile">Mobile No. *</label>
+                <input type="tel" id="mobile" placeholder="+91 9876543210">
+              </div>
+              <div>
+                <label for="email">Email ID *</label>
+                <input type="email" id="email" placeholder="you@example.com">
+              </div>
+            </div>
+            <div>
+              <label for="photoInput">Professional Photo * (JPG, PNG)</label>
+              <input type="file" id="photoInput" onchange="app.validateFormState()" accept="image/*">
+            </div>
+          </div>
+        </div>
+
+        <div id="addressSection" class="hidden card">
+          <h2 class="text-amber-400 font-semibold text-sm uppercase tracking-wider mb-4">3. Shipping Address (For Goodies)</h2>
+          <div class="mb-4">
+            <label for="addressLine1">Address Line 1 *</label>
+            <input type="text" id="addressLine1">
+          </div>
+          <div class="mb-4">
+            <label for="addressLine2">Address Line 2</label>
+            <input type="text" id="addressLine2">
+          </div>
+          <div class="mb-4">
+            <label for="postOffice">Post Office *</label>
+            <input type="text" id="postOffice">
+          </div>
+          <div class="mb-4">
+            <label for="country">Country *</label>
+            <select id="country" onchange="app.onCountryChange()">
+              <option value="">-- Select Country --</option>
+              <option value="India" selected>India</option>
+              <option value="Afghanistan">Afghanistan</option>
+              <option value="Albania">Albania</option>
+              <option value="Algeria">Algeria</option>
+              <option value="Argentina">Argentina</option>
+              <option value="Australia">Australia</option>
+              <option value="Austria">Austria</option>
+              <option value="Bangladesh">Bangladesh</option>
+              <option value="Belgium">Belgium</option>
+              <option value="Brazil">Brazil</option>
+              <option value="Canada">Canada</option>
+              <option value="China">China</option>
+              <option value="Denmark">Denmark</option>
+              <option value="Egypt">Egypt</option>
+              <option value="France">France</option>
+              <option value="Germany">Germany</option>
+              <option value="Greece">Greece</option>
+              <option value="Indonesia">Indonesia</option>
+              <option value="Italy">Italy</option>
+              <option value="Japan">Japan</option>
+              <option value="Malaysia">Malaysia</option>
+              <option value="Maldives">Maldives</option>
+              <option value="Nepal">Nepal</option>
+              <option value="Netherlands">Netherlands</option>
+              <option value="New Zealand">New Zealand</option>
+              <option value="Norway">Norway</option>
+              <option value="Pakistan">Pakistan</option>
+              <option value="Philippines">Philippines</option>
+              <option value="Russia">Russia</option>
+              <option value="Saudi Arabia">Saudi Arabia</option>
+              <option value="Singapore">Singapore</option>
+              <option value="South Africa">South Africa</option>
+              <option value="South Korea">South Korea</option>
+              <option value="Spain">Spain</option>
+              <option value="Sri Lanka">Sri Lanka</option>
+              <option value="Sweden">Sweden</option>
+              <option value="Switzerland">Switzerland</option>
+              <option value="Thailand">Thailand</option>
+              <option value="United Arab Emirates">United Arab Emirates</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="United States">United States</option>
+              <option value="Vietnam">Vietnam</option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label for="pinCode">PIN / ZIP Code *</label>
+            <div style="display:flex; gap:0.75rem;">
+              <input type="text" id="pinCode" oninput="app.onPinCodeInput()" style="flex:1;">
+              <button type="button" onclick="app.onPinCodeChange()" class="btn-primary" style="width:auto;padding:0.75rem 1.25rem;">Auto-fill</button>
+            </div>
+          </div>
+          <div id="indiaFields" class="grid grid-cols-1 md-grid-2 gap-4">
+            <div>
+              <label for="district">District / City *</label>
+              <input type="text" id="district">
+            </div>
+            <div>
+              <label for="state">State *</label>
+              <input type="text" id="state">
+            </div>
+          </div>
+          <div id="nonIndiaFields" class="hidden grid grid-cols-1 md-grid-2 gap-4">
+            <div>
+              <label for="districtNonIndia">District / City *</label>
+              <input type="text" id="districtNonIndia">
+            </div>
+            <div>
+              <label for="stateNonIndia">State / Province *</label>
+              <input type="text" id="stateNonIndia">
+            </div>
+          </div>
+        </div>
+
+        <div id="bankSection" class="hidden card">
+          <h2 class="text-amber-400 font-semibold text-sm uppercase tracking-wider mb-4">3. Bank Details (For Cash Prize)</h2>
+          <div class="grid grid-cols-1 md-grid-2 gap-4 mb-4">
+            <div>
+              <label for="bankName">Bank Name *</label>
+              <input type="text" id="bankName">
+            </div>
+            <div>
+              <label for="accountHolderName">Account Holder Name * (Auto-matched)</label>
+              <input type="text" id="accountHolderName" class="readonly-field" readonly tabindex="-1">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md-grid-2 gap-4 mb-4">
+            <div>
+              <label for="accountNumber">Account Number *</label>
+              <input type="text" id="accountNumber">
+            </div>
+            <div>
+              <label for="ifsc">IFSC Code *</label>
+              <input type="text" id="ifsc">
+            </div>
+          </div>
+          <div>
+            <label for="upiId">UPI ID (If Available)</label>
+            <input type="text" id="upiId" placeholder="username@upi">
+          </div>
+        </div>
+
+        <button type="submit" id="submitBtn" disabled class="btn-primary">Fill All Mandatory Details</button>
+      </form>
+
+      <div id="successPage" class="hidden text-center py-8 space-y-6">
+        <div class="success-icon">✓</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white mb-2">Claim Submitted Successfully!</h2>
+          <p id="successTextDetails" class="text-sm text-slate-400 max-w-md mx-auto">Your claim details have been recorded. Our team will verify and process your goodies/payout shortly.</p>
+        </div>
+        <div class="pt-4 border-t border-slate-700/60">
+          <button type="button" onclick="app.resetForNewClaim()" class="btn-primary" style="max-width:20rem;margin:0 auto;">➕ Submit Another Claim</button>
+        </div>
+      </div>
+
+      <div id="statusMessage" class="hidden alert alert-error mt-6 text-center"></div>
+    </div>
+
+    <script>
+      const app = (() => {
+        const state = {
+          winners: [],
+          selected: null,
+          existingProfile: null,
+          claimDuplicate: false,
+          useExistingMode: false
+        };
+
+        const baseUrl = "https://script.google.com/macros/s/AKfycbwu-3ibiG_YiJVzBw9CIDYQzP_Rzg9FTKd9gAOp46fCtD7AYIrp2n-JSnemdZOURior/exec";
+
+        async function api(action, payload = {}) {
+          const url = new URL(baseUrl);
+          url.searchParams.set("action", action);
+          Object.keys(payload).forEach(key => {
+            if (payload[key] !== null && payload[key] !== undefined) {
+              url.searchParams.set(key, payload[key]);
+            }
+          });
+
+          const res = await fetch(url.toString(), {
+            method: "GET"
+          });
+
+          const text = await res.text();
+          const data = JSON.parse(text);
+          if (!res.ok) {
+            throw new Error(data.message || `Request failed: ${res.status}`);
+          }
+          return data;
+        }
+
+        function init(data) {
+          state.winners = data.data || data;
+          document.getElementById("loader").classList.add("hidden");
+          document.getElementById("winnerForm").classList.remove("hidden");
+        }
+
+        function onTypeChange() {
+          const type = document.getElementById("typeSelect").value;
+          const periodSelect = document.getElementById("periodSelect");
+          const periodLabel = document.getElementById("periodLabel");
+
+          periodSelect.innerHTML = '<option value="">-- Select Period --</option>';
+          document.getElementById("rankSelect").innerHTML = '<option value="">-- Select Rank --</option>';
+          document.getElementById("rankSelect").disabled = true;
+          resetFormState();
+
+          if (!type) {
+            periodSelect.disabled = true;
+            return;
+          }
+
+          periodLabel.textContent = type === "Monthly" ? "Select Month" : "Select Week";
+
+          const periods = [...new Set(
+            state.winners.filter(w => w.periodType === type).map(w => w.periodLabel)
+          )];
+
+          periods.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p;
+            opt.textContent = p;
+            periodSelect.appendChild(opt);
+          });
+
+          periodSelect.disabled = false;
+          validateFormState();
+        }
+
+        function onPeriodChange() {
+          const type = document.getElementById("typeSelect").value;
+          const period = document.getElementById("periodSelect").value;
+          const rankSelect = document.getElementById("rankSelect");
+
+          rankSelect.innerHTML = '<option value="">-- Select Rank --</option>';
+          resetFormState();
+
+          if (!period) {
+            rankSelect.disabled = true;
+            return;
+          }
+
+          const filtered = state.winners
+            .filter(w => w.periodType === type && w.periodLabel === period)
+            .sort((a, b) => Number(a.rank) - Number(b.rank));
+
+          filtered.forEach(w => {
+            const opt = document.createElement("option");
+            opt.value = String(w.rank);
+            opt.textContent = `Rank #${w.rank}`;
+            rankSelect.appendChild(opt);
+          });
+
+          rankSelect.disabled = false;
+          validateFormState();
+        }
+
+        async function onRankChange() {
+          const type = document.getElementById("typeSelect").value;
+          const period = document.getElementById("periodSelect").value;
+          const rank = document.getElementById("rankSelect").value;
+
+          resetFormState();
+          if (!rank) return;
+
+          state.selected = state.winners.find(
+            w => w.periodType === type && w.periodLabel === period && String(w.rank) === String(rank)
+          );
+
+          if (!state.selected) return;
+
+          document.getElementById("userId").value = state.selected.userId;
+          document.getElementById("firstName").value = state.selected.firstName;
+          document.getElementById("lastName").value = state.selected.lastName;
+
+          document.getElementById("personalSection").classList.remove("hidden");
+
+           try {
+             const status = await api("checkUserClaimStatus", {
+               userId: state.selected.userId,
+               periodType: type,
+               periodLabel: period,
+               rank: rank
+             });
+
+             if (status.specificClaimExists) {
+               state.claimDuplicate = true;
+               state.existingProfile = null;
+               state.useExistingMode = false;
+               showDuplicateClaimError();
+               return;
+             }
+
+             state.claimDuplicate = false;
+
+             if (status.alreadySubmitted && status.previousData) {
+               state.existingProfile = status.previousData;
+               showReturningUserChoice();
+             } else {
+               state.existingProfile = null;
+               showNewDetailsForm(type);
+             }
+           } catch (err) {
+             showStatus(err.message);
+           }
+
+          validateFormState();
+        }
+
+        function showDuplicateClaimError() {
+          document.getElementById("duplicateClaimError").classList.remove("hidden");
+          document.getElementById("returningUserChoice").classList.add("hidden");
+          document.getElementById("newProfileFields").classList.add("hidden");
+          document.getElementById("addressSection").classList.add("hidden");
+          document.getElementById("bankSection").classList.add("hidden");
+
+          const btn = document.getElementById("submitBtn");
+          btn.disabled = true;
+          btn.textContent = "Already Claimed";
+        }
+
+        function showReturningUserChoice() {
+          document.getElementById("duplicateClaimError").classList.add("hidden");
+          document.getElementById("returningUserChoice").classList.remove("hidden");
+          document.getElementById("newProfileFields").classList.add("hidden");
+          document.getElementById("addressSection").classList.add("hidden");
+          document.getElementById("bankSection").classList.add("hidden");
+          prefillPreviousProfile();
+        }
+
+        function showNewDetailsForm(type) {
+          document.getElementById("duplicateClaimError").classList.add("hidden");
+          document.getElementById("returningUserChoice").classList.add("hidden");
+          document.getElementById("newProfileFields").classList.remove("hidden");
+
+          const addressSection = document.getElementById("addressSection");
+          const bankSection = document.getElementById("bankSection");
+
+          if (type === "Weekly") {
+            addressSection.classList.remove("hidden");
+            bankSection.classList.add("hidden");
+            onCountryChange();
+          } else if (type === "Monthly") {
+            bankSection.classList.remove("hidden");
+            addressSection.classList.add("hidden");
+            document.getElementById("accountHolderName").value = state.selected.fullName;
+          }
+
+          document.getElementById("existingPhotoUrl").value = "";
+        }
+
+        function prefillPreviousProfile() {
+          const p = state.existingProfile;
+          if (!p) return;
+          document.getElementById("existingPhotoUrl").value = p.photoUrl || "";
+        }
+
+        async function usePreviousProfile(usePrevious) {
+          state.useExistingMode = usePrevious;
+          const type = document.getElementById("typeSelect").value;
+
+          const usePrevBtn = document.getElementById("returningUserChoice").querySelector(".btn-filled");
+          const useNewBtn = document.getElementById("returningUserChoice").querySelector(".btn-outlined");
+
+          if (usePrevious) {
+            usePrevBtn.className = "btn-filled";
+            useNewBtn.className = "btn-outlined";
+            document.getElementById("newProfileFields").classList.add("hidden");
+            document.getElementById("addressSection").classList.add("hidden");
+            document.getElementById("bankSection").classList.add("hidden");
+          } else {
+            useNewBtn.className = "btn-filled";
+            usePrevBtn.className = "btn-outlined";
+            document.getElementById("newProfileFields").classList.remove("hidden");
+
+            if (type === "Weekly") {
+              document.getElementById("addressSection").classList.remove("hidden");
+              document.getElementById("bankSection").classList.add("hidden");
+              onCountryChange();
+            } else if (type === "Monthly") {
+              document.getElementById("bankSection").classList.remove("hidden");
+              document.getElementById("addressSection").classList.add("hidden");
+              document.getElementById("accountHolderName").value = state.selected.fullName;
+            }
+
+            document.getElementById("existingPhotoUrl").value = "";
+          }
+
+          validateFormState();
+        }
+
+        function onCountryChange() {
+          const country = document.getElementById("country").value;
+          const indiaFields = document.getElementById("indiaFields");
+          const nonIndiaFields = document.getElementById("nonIndiaFields");
+
+          if (country === "India") {
+            indiaFields.classList.remove("hidden");
+            nonIndiaFields.classList.add("hidden");
+          } else {
+            indiaFields.classList.add("hidden");
+            nonIndiaFields.classList.remove("hidden");
+          }
+
+          validateFormState();
+        }
+
+        async function onPinCodeChange() {
+          const pin = document.getElementById("pinCode").value.trim();
+          if (pin.length < 6) return;
+
+          const districtEl = document.getElementById("district");
+          const stateEl = document.getElementById("state");
+          districtEl.value = "";
+          stateEl.value = "";
+
+          const statusEl = document.getElementById("statusMessage");
+          statusEl.classList.remove("hidden", "alert-error", "alert-warning");
+          statusEl.classList.add("mt-2", "alert", "alert-warning");
+          statusEl.textContent = "Looking up address...";
+
+          try {
+            const data = await api("getAddressFromPinCode", { pin });
+            statusEl.classList.add("hidden");
+            if (data) {
+              districtEl.value = data.district || "";
+              stateEl.value = data.state || "";
+            }
+          } catch (err) {
+            console.error("PIN lookup failure:", err);
+            statusEl.classList.remove("hidden", "alert-warning");
+            statusEl.classList.add("mt-2", "alert", "alert-error");
+            statusEl.textContent = "PIN lookup failed. Please enter District/State manually.";
+          }
+        }
+
+        function onPinCodeInput() {
+          const pin = document.getElementById("pinCode").value.trim();
+          if (pin.length >= 6) {
+            onPinCodeChange();
+          }
+        }
+
+        async function handleSubmit(e) {
+          e.preventDefault();
+          if (state.claimDuplicate) {
+            showStatus("Already submitted! You have already claimed the reward for this rank and period.");
+            return;
+          }
+
+          const submitBtn = document.getElementById("submitBtn");
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Submitting Claim...";
+
+          const fileInput = document.getElementById("photoInput");
+          const hasNewPhoto = fileInput.files && fileInput.files[0];
+
+          if (hasNewPhoto && !(state.existingProfile && state.useExistingMode)) {
+            fileInput.fileUpload = true;
+            const base64Data = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = ev => resolve(ev.target.result.split(",")[1]);
+              reader.onerror = reject;
+              reader.readAsDataURL(fileInput.files[0]);
+            });
+
+            const fileData = {
+              fileName: `${state.selected.fullName.replace(/\s+/g, "_")}_${Date.now()}_${fileInput.files[0].name}`,
+              mimeType: fileInput.files[0].type,
+              data: base64Data
+            };
+
+            submitPayload(fileData);
+          } else {
+            submitPayload(null);
+          }
+        }
+
+        async function submitPayload(photoFile) {
+          const type = document.getElementById("typeSelect").value;
+          const country = document.getElementById("country").value;
+          let district, state, pin;
+
+          if (country === "India") {
+            district = document.getElementById("district").value;
+            state = document.getElementById("state").value;
+          } else {
+            district = document.getElementById("districtNonIndia").value;
+            state = document.getElementById("stateNonIndia").value;
+          }
+          pin = document.getElementById("pinCode").value;
+
+          let formData;
+
+          if (state.existingProfile && state.useExistingMode) {
+            const prev = state.existingProfile;
+            formData = {
+              userId: document.getElementById("userId").value,
+              periodType: type,
+              periodLabel: document.getElementById("periodSelect").value,
+              rank: document.getElementById("rankSelect").value,
+              firstName: document.getElementById("firstName").value,
+              lastName: document.getElementById("lastName").value,
+              mobile: prev.mobile || "",
+              email: prev.email || "",
+              existingPhotoUrl: prev.photoUrl || "",
+              photoFile: null,
+              useExistingMode: true,
+              addressLine1: prev.addressLine || "",
+              addressLine2: "",
+              postOffice: "",
+              district: prev.district || "",
+              state: prev.state || "",
+              country: "India",
+              pinCode: prev.pinCode || "",
+              bankName: prev.bankName || "",
+              accountHolderName: state.selected.fullName,
+              accountNumber: prev.accountNumber || "",
+              ifsc: prev.ifsc || "",
+              upiId: prev.upiId || ""
+            };
+          } else {
+            formData = {
+              userId: document.getElementById("userId").value,
+              periodType: type,
+              periodLabel: document.getElementById("periodSelect").value,
+              rank: document.getElementById("rankSelect").value,
+              firstName: document.getElementById("firstName").value,
+              lastName: document.getElementById("lastName").value,
+              mobile: document.getElementById("mobile").value,
+              email: document.getElementById("email").value,
+              existingPhotoUrl: "",
+              photoFile: photoFile,
+              useExistingMode: false,
+              addressLine1: document.getElementById("addressLine1").value,
+              addressLine2: document.getElementById("addressLine2").value,
+              postOffice: document.getElementById("postOffice").value,
+              district: district,
+              state: state,
+              country: country,
+              pinCode: pin,
+              bankName: document.getElementById("bankName").value,
+              accountHolderName: document.getElementById("accountHolderName").value,
+              accountNumber: document.getElementById("accountNumber").value,
+              ifsc: document.getElementById("ifsc").value,
+              upiId: document.getElementById("upiId").value
+            };
+          }
+
+          try {
+            const result = await api("submitWinnerDetails", formData);
+            if (result.success) {
+              document.getElementById("winnerForm").classList.add("hidden");
+              document.getElementById("headerSection").classList.add("hidden");
+              document.getElementById("statusMessage").classList.add("hidden");
+              document.getElementById("successPage").classList.remove("hidden");
+            } else {
+              showStatus(result.message);
+              document.getElementById("submitBtn").disabled = false;
+              validateFormState();
+            }
+          } catch (err) {
+            showStatus(err.message);
+            document.getElementById("submitBtn").disabled = false;
+            validateFormState();
+          }
+        }
+
+        function validateFormState() {
+          const submitBtn = document.getElementById("submitBtn");
+          const type = document.getElementById("typeSelect").value;
+          const period = document.getElementById("periodSelect").value;
+          const rank = document.getElementById("rankSelect").value;
+
+          if (!type || !period || !rank || state.claimDuplicate) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = state.claimDuplicate ? "Already Claimed" : "Fill All Mandatory Details";
+            return;
+          }
+
+          if (state.existingProfile && state.useExistingMode) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit Claim with Existing Details";
+            return;
+          }
+
+          const email = document.getElementById("email").value.trim();
+          const photoFile = document.getElementById("photoInput").files ? document.getElementById("photoInput").files[0] : null;
+
+          if (type === "Weekly") {
+            const mobile = document.getElementById("mobile").value.trim();
+            const addr1 = document.getElementById("addressLine1").value.trim();
+            const po = document.getElementById("postOffice").value.trim();
+            const country = document.getElementById("country").value;
+            let dist, stateVal, pin;
+
+            if (country === "India") {
+              dist = document.getElementById("district").value.trim();
+              stateVal = document.getElementById("state").value.trim();
+            } else {
+              dist = document.getElementById("districtNonIndia").value.trim();
+              stateVal = document.getElementById("stateNonIndia").value.trim();
+            }
+            pin = document.getElementById("pinCode").value.trim();
+
+            submitBtn.disabled = !(mobile && email && addr1 && po && country && dist && stateVal && pin && photoFile);
+            submitBtn.textContent = submitBtn.disabled ? "Fill All Mandatory Details" : "Submit Claim";
+          } else if (type === "Monthly") {
+            const bank = document.getElementById("bankName").value.trim();
+            const acc = document.getElementById("accountNumber").value.trim();
+            const ifsc = document.getElementById("ifsc").value.trim();
+            submitBtn.disabled = !(email && bank && acc && ifsc && photoFile);
+            submitBtn.textContent = submitBtn.disabled ? "Fill All Mandatory Details" : "Submit Claim";
+          }
+        }
+
+        function resetFormState() {
+          state.selected = null;
+          state.existingProfile = null;
+          state.claimDuplicate = false;
+          state.useExistingMode = false;
+
+          document.getElementById("duplicateClaimError").classList.add("hidden");
+          document.getElementById("returningUserChoice").classList.add("hidden");
+          document.getElementById("statusMessage").classList.add("hidden");
+          document.getElementById("personalSection").classList.add("hidden");
+          document.getElementById("addressSection").classList.add("hidden");
+          document.getElementById("bankSection").classList.add("hidden");
+          document.getElementById("newProfileFields").classList.remove("hidden");
+          document.getElementById("existingPhotoUrl").value = "";
+          document.getElementById("country").value = "India";
+          document.getElementById("indiaFields").classList.remove("hidden");
+          document.getElementById("nonIndiaFields").classList.add("hidden");
+
+          const btn = document.getElementById("submitBtn");
+          btn.disabled = true;
+          btn.textContent = "Fill All Mandatory Details";
+        }
+
+        function resetForNewClaim() {
+          document.getElementById("winnerForm").reset();
+          document.getElementById("successPage").classList.add("hidden");
+          document.getElementById("headerSection").classList.remove("hidden");
+          document.getElementById("winnerForm").classList.remove("hidden");
+          document.getElementById("country").value = "India";
+          document.getElementById("indiaFields").classList.remove("hidden");
+          document.getElementById("nonIndiaFields").classList.add("hidden");
+          onTypeChange();
+        }
+
+        function showStatus(message) {
+          const el = document.getElementById("statusMessage");
+          el.classList.remove("hidden", "alert-warning", "alert-error");
+          el.classList.add("mt-6", "alert", "alert-error", "text-center");
+          el.textContent = message;
+        }
+
+        return {
+          api,
+          init,
+          onTypeChange,
+          onPeriodChange,
+          onRankChange,
+          usePreviousProfile,
+          onCountryChange,
+          onPinCodeInput,
+          onPinCodeChange,
+          handleSubmit,
+          validateFormState,
+          resetForNewClaim,
+          showStatus,
+          handleError: showStatus
+        };
+      })();
+
+      window.addEventListener("DOMContentLoaded", () => {
+        app.api("getWinnersData")
+          .then(app.init)
+          .catch(app.handleError);
+      });
+    </script>
+  </body>
+</html>
