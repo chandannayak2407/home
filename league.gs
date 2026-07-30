@@ -14,7 +14,7 @@ function doGet(e) {
   if (action) {
     return handleRequest(e);
   }
-  return HtmlService.createTemplateFromFile("index")
+  return HtmlService.createTemplateFromFile("league")
     .evaluate()
     .setTitle("UpToSkills - Winner Claim Portal")
     .addMetaTag("viewport", "width=device-width, initial-scale=1");
